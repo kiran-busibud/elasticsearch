@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TicketIndexController;
 use Illuminate\Support\Facades\Route;
 use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Http\Request;
@@ -73,3 +74,7 @@ Route::get('/search_in_test_index', function(Request $request){
     
     dd($response['hits']);
 });
+
+Route::get('/get_tickets',[TicketIndexController::class, 'getAllTickets']);
+
+Route::get('/index_tickets',[TicketIndexController::class, 'indexAllTickets']);
