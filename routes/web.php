@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Elastic\Elasticsearch\ClientBuilder;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,59 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/create_index', function () {
+    $client = ClientBuilder::create()->build();
+
+    $params = [
+        'index' => 'test_index'
+    ];
+    $response = $client->indices()->create($params);
+
+    return response()->json($response);
+});
+
+Route::post('/post_in_test_index', function (Request $request) {
+    $client = ClientBuilder::create()->build();
+
+    $body = $request->all();
+
+    $params = [
+        'index' => 'test_index',
+        'id' => 1,
+        'body' => ['name' => $body['name'], 'email' => $body['email']]
+    ];
+
+    $response = $client->index($params);
+    return response()->json($response);
+});
+
+Route::get('/search_in_test_index', function(Request $request){
+
+    $client = ClientBuilder::create()->build();
+
+    // $body = $request->all();
+
+    $params = [
+        'index' => 'test_index',
+        'body'  => [
+            "query" => [
+                "query_string"=> [
+                    "fields" => [ "email", "name" ],
+                  "query" => "mays"
+            
+                ]
+            ]
+        ]
+    ];
+
+    // $params = [
+    //     'index' => 'test_index',
+    //     'id'    => 1
+    // ];
+    
+    $response = $client->search($params);
+    
+    dd($response['hits']);
 });
