@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\TicketCreated;
+use App\Events\TicketDeleted;
+use App\Events\TicketUpdated;
+use App\Listeners\IndexCreatedTicket;
+use App\Listeners\IndexDeletedTicket;
+use App\Listeners\IndexUpdatedTicket;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +24,15 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        TicketCreated::class => [
+            IndexCreatedTicket::class,
+        ],
+        TicketUpdated::class => [
+            IndexUpdatedTicket::class,
+        ],
+        TicketDeleted::class => [
+            IndexDeletedTicket::class,
+        ]
     ];
 
     /**
