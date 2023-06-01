@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TicketIndexController;
 use Illuminate\Support\Facades\Route;
 use Elastic\Elasticsearch\ClientBuilder;
@@ -46,7 +47,7 @@ Route::post('/post_in_test_index', function (Request $request) {
     return response()->json($response);
 });
 
-Route::get('/search_in_test_index', function(Request $request){
+Route::get('/search_in_test_index', function (Request $request) {
 
     $client = ClientBuilder::create()->build();
 
@@ -54,12 +55,12 @@ Route::get('/search_in_test_index', function(Request $request){
 
     $params = [
         'index' => 'test_index',
-        'body'  => [
+        'body' => [
             "query" => [
-                "query_string"=> [
-                    "fields" => [ "email", "name" ],
-                  "query" => "mays"
-            
+                "query_string" => [
+                    "fields" => ["email", "name"],
+                    "query" => "*mays*"
+
                 ]
             ]
         ]
@@ -69,12 +70,14 @@ Route::get('/search_in_test_index', function(Request $request){
     //     'index' => 'test_index',
     //     'id'    => 1
     // ];
-    
+
     $response = $client->search($params);
-    
+
     dd($response['hits']);
 });
 
-Route::get('/get_tickets',[TicketIndexController::class, 'getAllTickets']);
+Route::get('/get_tickets', [TicketIndexController::class, 'getAllTickets']);
 
-Route::get('/index_tickets',[TicketIndexController::class, 'indexAllTickets']);
+Route::get('/index_tickets', [TicketIndexController::class, 'indexAllTickets']);
+
+Route::get('/search', [SearchController::class, 'search']);

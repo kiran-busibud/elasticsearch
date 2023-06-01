@@ -6,6 +6,7 @@ use App\Repositories\TicketRepository;
 use App\Repositories\UserRepository;
 use Elastic\Elasticsearch\ClientBuilder;
 use Faker\Factory as Faker;
+use Log;
 
 class TicketIndexService
 {
@@ -43,18 +44,16 @@ class TicketIndexService
         $tickets = $this->getDenormalizedTicketData($ticketIds);
 
         foreach($tickets as $ticket) {
-
             $id = $ticket['id'];
             unset($ticket['id']);
+            Log::info($id,[$ticket]);
             $params = [ 
                 'index' => 'ticket_index1',
                 'id'    => $id,
                 'body'  => $ticket
             ];
+            $response = $this->elasticsearchClient->index($params);
         }
-        
-        $response = $this->elasticsearchClient->index($params);
-
-        return $response;
+        return response()->json($response);
     }
 }
